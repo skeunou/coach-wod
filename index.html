@@ -1,1 +1,703 @@
-<!DOCTYPE html><html><body><p>WOD en cours de chargement...</p></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>WOD Coach Trail</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:   #0d0d0f;
+    --surf: #141416;
+    --surf2:#1c1c20;
+    --bdr:  #2a2a30;
+    --acc:  #e8ff47;
+    --acc2: #ff6b35;
+    --warn: #ff9500;
+    --txt:  #f0f0f0;
+    --mut:  #6b6b78;
+    --grn:  #4ade80;
+    --red:  #f87171;
+    --blue: #60a5fa;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--txt); font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; min-height: 100vh; }
+  .bb { font-family: 'Bebas Neue', sans-serif; }
+
+  /* HEADER STICKY */
+  #header { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 2px solid var(--acc2); }
+  #header-top { padding: 14px 14px 10px; }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  #session-label { font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:3px; color:var(--acc2); text-transform:uppercase; margin-bottom:2px; }
+  #session-title { font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:1px; line-height:1; color:var(--txt); }
+  #session-badge { font-size:10px; font-weight:600; padding:4px 8px; border-radius:4px; background:rgba(232,255,71,0.12); color:var(--acc); border:1px solid rgba(232,255,71,0.3); white-space:nowrap; flex-shrink:0; }
+  #session-banner { margin-top:10px; background:rgba(255,107,53,0.06); border-left:3px solid var(--acc2); padding:8px 10px; font-size:11px; color:#c8c8c8; line-height:1.5; }
+  #session-banner strong { color:var(--acc2); }
+
+  /* TIMERS WRAP */
+  #timers-wrap { margin: 8px 14px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* TIMER WOD GLOBAL */
+  #wod-timer-wrap { background: var(--surf); border: 1px solid rgba(255,107,53,0.4); border-radius: 10px; padding: 12px; }
+  #wod-timer-lbl { font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:2px; color:var(--acc2); margin-bottom:6px; }
+  #wod-timer-display { font-family:'Bebas Neue',sans-serif; font-size:42px; text-align:center; line-height:1; letter-spacing:2px; color:var(--acc2); transition:color .2s; }
+  #wod-timer-display.running { color:var(--grn); }
+  #wod-round-display { font-family:'Bebas Neue',sans-serif; font-size:13px; text-align:center; color:var(--mut); margin-top:3px; }
+  .wod-timer-controls { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+  #wod-toggle { padding:10px; background:var(--acc2); color:#000; border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:14px; cursor:pointer; }
+  #wod-reset  { padding:10px; background:var(--surf2); color:var(--mut); border:1px solid var(--bdr); border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:14px; cursor:pointer; }
+
+  /* TIMER RÉCUP */
+  #recup-timer-wrap { background: var(--surf); border: 1px solid var(--bdr); border-radius: 10px; padding: 12px; }
+  #recup-timer-lbl { font-family:'Bebas Neue',sans-serif; font-size:10px; letter-spacing:2px; color:var(--mut); margin-bottom:6px; }
+  #recup-timer-display { font-family:'Bebas Neue',sans-serif; font-size:42px; text-align:center; line-height:1; letter-spacing:2px; color:var(--acc); transition:color .2s; }
+  #recup-timer-display.running { color:var(--grn); }
+  .recup-presets { display:grid; grid-template-columns:repeat(2,1fr); gap:4px; margin:6px 0; }
+  .preset-btn { padding:7px 2px; border:1px solid var(--bdr); background:var(--surf2); color:var(--txt); border-radius:6px; font-family:system-ui; font-size:11px; font-weight:500; cursor:pointer; }
+  .preset-btn.active { border-color:var(--acc); background:var(--acc); color:#000; font-weight:700; }
+  .recup-controls { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  #recup-toggle { padding:10px; background:var(--acc); color:#000; border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:14px; cursor:pointer; }
+  #recup-reset  { padding:10px; background:var(--surf2); color:var(--mut); border:1px solid var(--bdr); border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:14px; cursor:pointer; }
+
+  /* TABS */
+  #tabs { display:flex; background:var(--surf); border-bottom:1px solid var(--bdr); overflow-x:auto; scrollbar-width:none; margin-top:8px; }
+  #tabs::-webkit-scrollbar { display:none; }
+  .tab-btn { flex:1; padding:10px 4px; text-align:center; font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:2px; cursor:pointer; color:var(--mut); background:none; border:none; border-bottom:2px solid transparent; white-space:nowrap; }
+  .tab-btn.active { color:var(--acc2); border-bottom-color:var(--acc2); }
+
+  /* CONTENT */
+  #content { padding: 12px 14px 80px; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; }
+
+  /* CARDS */
+  .card { background:var(--surf); border:1px solid var(--bdr); border-radius:10px; padding:14px; margin-bottom:10px; }
+  .card.warn { border:1px solid rgba(255,149,0,0.4); }
+  .card.wod  { border:1px solid rgba(255,107,53,0.4); }
+  .section-lbl { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:2px; color:var(--mut); margin-bottom:12px; }
+
+  /* WOD CARD */
+  .wod-format-badge { display:inline-block; font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:2px; padding:4px 10px; border-radius:4px; background:rgba(255,107,53,0.15); color:var(--acc2); border:1px solid rgba(255,107,53,0.3); margin-bottom:10px; }
+  .wod-duration { font-size:11px; color:var(--mut); margin-bottom:10px; }
+  .wod-rx { margin-bottom:8px; }
+  .wod-rx-title { font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:2px; color:var(--acc); margin-bottom:6px; }
+  .wod-scaled-title { font-family:'Bebas Neue',sans-serif; font-size:11px; letter-spacing:2px; color:var(--mut); margin-bottom:6px; }
+  .wod-line { display:flex; align-items:baseline; gap:8px; padding:6px 0; border-bottom:1px solid var(--bdr); }
+  .wod-line:last-child { border-bottom:none; }
+  .wod-reps { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--acc2); min-width:40px; }
+  .wod-move { font-size:13px; color:var(--txt); font-weight:600; }
+  .wod-detail { font-size:11px; color:var(--mut); }
+  .wod-video { display:inline-flex; align-items:center; gap:4px; font-size:10px; color:var(--acc2); padding:2px 6px; border:1px solid rgba(255,107,53,0.3); border-radius:4px; background:rgba(255,107,53,0.06); text-decoration:none; font-weight:600; margin-top:4px; }
+
+  /* ROUNDS COUNTER */
+  .rounds-counter { display:flex; align-items:center; justify-content:space-between; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px; padding:12px 16px; margin-bottom:10px; }
+  .rounds-val { font-family:'Bebas Neue',sans-serif; font-size:48px; color:var(--acc2); line-height:1; }
+  .rounds-lbl { font-size:10px; color:var(--mut); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+  .rounds-btn { width:52px; height:52px; border-radius:10px; border:none; font-family:'Bebas Neue',sans-serif; font-size:28px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .rounds-plus { background:var(--acc2); color:#000; }
+  .rounds-minus { background:var(--surf); color:var(--mut); border:1px solid var(--bdr) !important; }
+
+  /* CHECKLIST */
+  .check-item { display:flex; align-items:center; gap:10px; padding:11px 12px; background:var(--surf); border:1px solid var(--bdr); border-radius:8px; margin-bottom:6px; cursor:pointer; }
+  .check-item.done { border-color:var(--grn); opacity:.5; }
+  .check-circle { width:22px; height:22px; border-radius:50%; border:2px solid var(--bdr); background:transparent; display:flex; align-items:center; justify-content:center; font-size:12px; color:#000; flex-shrink:0; }
+  .check-item.done .check-circle { background:var(--grn); border-color:var(--grn); }
+  .check-text { flex:1; font-size:13px; color:var(--txt); }
+
+  /* BILAN */
+  .scale-row { margin-bottom:12px; }
+  .scale-lbl { font-size:10px; color:var(--mut); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px; }
+  .scale-btns { display:flex; gap:3px; }
+  .scale-btn { flex:1; padding:9px 2px; border:1.5px solid var(--bdr); background:var(--surf2); color:var(--mut); border-radius:6px; font-family:'Bebas Neue',sans-serif; font-size:17px; cursor:pointer; text-align:center; }
+  .scale-btn.sel-acc  { background:var(--acc);  color:#000; border-color:var(--acc); }
+  .scale-btn.sel-ora  { background:var(--acc2); color:#000; border-color:var(--acc2); }
+  .scale-btn.sel-grn  { background:rgba(74,222,128,0.15); color:var(--grn);  border-color:var(--grn); }
+  .scale-btn.sel-warn { background:rgba(255,149,0,0.15);  color:var(--warn); border-color:var(--warn); }
+  .final-textarea { width:100%; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; padding:10px; color:var(--txt); font-family:system-ui; font-size:13px; min-height:70px; resize:none; outline:none; margin-bottom:12px; }
+  .zp-alert { background:rgba(255,149,0,0.1); border:1px solid rgba(255,149,0,0.3); border-radius:8px; padding:12px 14px; color:var(--warn); font-size:12px; margin-bottom:12px; }
+
+  /* EXPORT */
+  .export-pre { background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; padding:12px; font-size:11px; line-height:1.7; white-space:pre-wrap; color:var(--txt); margin-bottom:10px; font-family:monospace; }
+
+  /* BUTTONS */
+  .btn-primary   { width:100%; padding:16px; background:var(--acc2); color:#000; border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; cursor:pointer; margin-bottom:8px; }
+  .btn-secondary { width:100%; padding:13px; background:var(--surf2); color:var(--acc2); border:1px solid rgba(255,107,53,0.3); border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; cursor:pointer; margin-top:8px; }
+  .btn-copy { width:100%; padding:12px; background:var(--surf2); color:var(--txt); border:1px solid var(--bdr); border-radius:8px; font-family:system-ui; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:10px; }
+  .btn-hist { width:100%; background:none; border:1px solid var(--bdr); color:var(--mut); border-radius:8px; padding:10px 14px; font-family:system-ui; font-size:12px; font-weight:600; cursor:pointer; text-align:left; margin-top:4px; }
+
+  /* FINISH */
+  #finish-screen { display:none; background:var(--bg); min-height:100vh; padding:40px 20px; text-align:center; }
+  #finish-screen.active { display:block; }
+  .finish-scores { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+  .finish-score-box { background:var(--surf); border:1px solid var(--bdr); border-radius:8px; padding:10px; }
+
+  /* PREP */
+  .prep-item { display:flex; gap:8px; margin-bottom:7px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONFIGURATION — MODIFIER UNIQUEMENT CETTE SECTION
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+const WOD_INFO = {
+  id:        "WOD1-2026-05-29",
+  label:     "WOD1 · 29 Mai 2026",
+  title:     "Fran revisitée",
+  badge:     "Bloc 1 · Phase Adapt.",
+  banner:    "AMRAP 15 · RPE cible 7 · post-UBS récup active",
+  type:      "WOD-B1",
+  dateLabel: "29 mai 2026",
+};
+
+// FORMAT : "AMRAP", "EMOM", "FOR_TIME", "CHIPPER"
+const WOD_FORMAT = "AMRAP";
+const WOD_DURATION_SEC = 15 * 60; // durée totale en secondes
+const WOD_ROUNDS_TARGET = null;    // null si AMRAP, sinon nombre de rounds cible
+
+// MOUVEMENTS RX
+const WOD_RX = [
+  { reps:"21", move:"Thrusters KB", detail:"KB 16 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
+  { reps:"21", move:"Pull-ups",     detail:"Tractions BW", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
+  { reps:"15", move:"Thrusters KB", detail:"KB 16 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
+  { reps:"15", move:"Pull-ups",     detail:"Tractions BW", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
+  { reps:"9",  move:"Thrusters KB", detail:"KB 16 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
+  { reps:"9",  move:"Pull-ups",     detail:"Tractions BW", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
+];
+
+// MOUVEMENTS SCALED
+const WOD_SCALED = [
+  { reps:"21", move:"Thrusters KB", detail:"KB 12 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
+  { reps:"21", move:"Ring rows",    detail:"TRX incliné 45°", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
+  { reps:"15", move:"Thrusters KB", detail:"KB 12 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
+  { reps:"15", move:"Ring rows",    detail:"TRX incliné 45°", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
+  { reps:"9",  move:"Thrusters KB", detail:"KB 12 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
+  { reps:"9",  move:"Ring rows",    detail:"TRX incliné 45°", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
+];
+
+const WARMUP = [
+  "Rotation hanches + épaules — 90s",
+  "Squat profond BW — 10 reps",
+  "Dead hang barre — 3 × 20s",
+  "Thruster BW — 10 reps technique",
+  "Jumping jacks — 30s",
+];
+
+const COOLDOWN = [
+  "Étirement épaules cross-body — 30s/côté",
+  "Fente basse hip flexor — 45s/côté",
+  "Pigeon au sol — 60s/côté",
+  "Respiration 4-7-8 — 5 cycles",
+];
+
+const MATERIEL = [
+  "KB 16 kg (RX) ou 12 kg (Scaled)",
+  "Barre de traction (ou TRX pour Scaled)",
+  "Tapis",
+];
+
+const VIGILANCE_HTML = `
+  ZP : si ≥4/10, remplacer thrusters par goblet squat KB.<br>
+  RPE cible <strong style="color:var(--acc2)">7 max</strong> — phase adaptation, pas de crame totale.<br>
+  Scaled = pas une honte, c'est la bonne décision si la forme n'est pas là.
+`;
+
+const RPE_PREVU = 7;
+</script>
+<!-- ═══════════════════════════════════════════════════════════
+     FIN CONFIGURATION
+     ═══════════════════════════════════════════════════════════ -->
+
+<!-- FINISH SCREEN -->
+<div id="finish-screen">
+  <div style="font-size:52px;margin-bottom:12px">✓</div>
+  <div class="bb" id="finish-title" style="font-size:28px;letter-spacing:2px;color:var(--acc2);margin-bottom:6px"></div>
+  <div id="finish-sub" style="font-size:13px;color:var(--mut);margin-bottom:20px"></div>
+  <div class="finish-scores" id="finish-scores"></div>
+  <div id="finish-zp-alert"></div>
+  <pre class="export-pre" id="finish-export"></pre>
+  <button class="btn-copy" id="finish-copy">▤ Copier dans le presse-papier</button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div id="header">
+    <div id="header-top">
+      <div class="header-row">
+        <div>
+          <div class="bb" id="session-label"></div>
+          <div class="bb" id="session-title"></div>
+        </div>
+        <span id="session-badge"></span>
+      </div>
+      <div id="session-banner"></div>
+    </div>
+
+    <!-- DOUBLE TIMER -->
+    <div id="timers-wrap">
+      <!-- Timer WOD global -->
+      <div id="wod-timer-wrap">
+        <div class="bb" id="wod-timer-lbl">WOD Timer</div>
+        <div class="bb" id="wod-timer-display">00:00</div>
+        <div class="bb" id="wod-round-display">Round 0</div>
+        <div class="wod-timer-controls">
+          <button id="wod-toggle">▶ GO</button>
+          <button id="wod-reset">RESET</button>
+        </div>
+      </div>
+      <!-- Timer récup -->
+      <div id="recup-timer-wrap">
+        <div class="bb" id="recup-timer-lbl">Récup</div>
+        <div class="bb" id="recup-timer-display">01:30</div>
+        <div class="recup-presets">
+          <button class="preset-btn" data-sec="60">1'00</button>
+          <button class="preset-btn active" data-sec="90">1'30</button>
+          <button class="preset-btn" data-sec="120">2'00</button>
+          <button class="preset-btn" data-sec="180">3'00</button>
+        </div>
+        <div class="recup-controls">
+          <button id="recup-toggle">▶ START</button>
+          <button id="recup-reset">RESET</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div id="tabs">
+      <button class="tab-btn active" data-tab="prep">Prép.</button>
+      <button class="tab-btn" data-tab="warm">Échauff.</button>
+      <button class="tab-btn" data-tab="wod">WOD</button>
+      <button class="tab-btn" data-tab="cool">Retour</button>
+      <button class="tab-btn" data-tab="end">Bilan</button>
+    </div>
+  </div>
+
+  <div id="content">
+
+    <!-- PREP -->
+    <div class="tab-pane active" id="tab-prep">
+      <div class="card">
+        <div class="section-lbl">Matériel</div>
+        <div id="prep-list"></div>
+      </div>
+      <div class="card warn">
+        <div class="section-lbl" style="color:var(--warn)">Vigilance</div>
+        <div id="vigilance-content" style="font-size:12px;color:#c8c8c8;line-height:1.7"></div>
+      </div>
+      <button class="btn-primary" onclick="setTab('warm')">C'est parti → Échauffement</button>
+    </div>
+
+    <!-- WARMUP -->
+    <div class="tab-pane" id="tab-warm">
+      <div id="warmup-list"></div>
+      <button class="btn-secondary" onclick="setTab('wod')">→ WOD</button>
+    </div>
+
+    <!-- WOD -->
+    <div class="tab-pane" id="tab-wod">
+      <!-- Format + durée -->
+      <div class="card wod">
+        <div class="section-lbl" style="color:var(--acc2)">Le WOD</div>
+        <span class="wod-format-badge" id="wod-format-badge"></span>
+        <div class="wod-duration" id="wod-duration-label"></div>
+
+        <!-- Choix RX / Scaled -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+          <button id="btn-rx" onclick="setVersion('rx')" style="padding:10px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;background:var(--acc2);color:#000;border:none">RX</button>
+          <button id="btn-scaled" onclick="setVersion('scaled')" style="padding:10px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;background:var(--surf2);color:var(--mut);border:1px solid var(--bdr)">SCALED</button>
+        </div>
+
+        <!-- Mouvements RX -->
+        <div id="wod-rx-block">
+          <div class="wod-rx-title">RX</div>
+          <div id="wod-rx-list"></div>
+        </div>
+        <!-- Mouvements Scaled -->
+        <div id="wod-scaled-block" style="display:none;margin-top:12px">
+          <div class="wod-scaled-title">SCALED</div>
+          <div id="wod-scaled-list"></div>
+        </div>
+      </div>
+
+      <!-- Compteur de rounds (AMRAP) ou reps (For Time) -->
+      <div id="rounds-section" class="rounds-counter">
+        <div>
+          <div class="rounds-val" id="rounds-val">0</div>
+          <div class="rounds-lbl" id="rounds-lbl">Rounds</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="rounds-btn rounds-minus" onclick="changeRounds(-1)">−</button>
+          <button class="rounds-btn rounds-plus"  onclick="changeRounds(+1)">+</button>
+        </div>
+      </div>
+
+      <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:10px;margin-bottom:10px">
+        <div style="font-size:10px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Note en cours</div>
+        <textarea id="wod-note" placeholder="Sensations · difficulté · reps non terminées..." rows="2" style="width:100%;background:transparent;border:none;color:var(--txt);font-family:system-ui;font-size:12px;resize:none;outline:none;"></textarea>
+      </div>
+
+      <button class="btn-secondary" onclick="setTab('cool')">→ Retour au calme</button>
+    </div>
+
+    <!-- COOLDOWN -->
+    <div class="tab-pane" id="tab-cool">
+      <div id="cooldown-list"></div>
+      <button class="btn-secondary" onclick="setTab('end')">→ Bilan final</button>
+    </div>
+
+    <!-- BILAN -->
+    <div class="tab-pane" id="tab-end">
+      <div class="card">
+        <div class="section-lbl">Bilan WOD</div>
+
+        <!-- Résultat -->
+        <div style="background:var(--surf2);border:1px solid rgba(255,107,53,0.3);border-radius:8px;padding:12px;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--acc2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Résultat</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--mut);margin-bottom:4px">Rounds / Reps</div>
+              <input id="result-rounds" type="number" inputmode="numeric" placeholder="ex: 5+12" style="width:100%;background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:8px;color:var(--txt);font-family:'Bebas Neue',sans-serif;font-size:20px;outline:none;"/>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--mut);margin-bottom:4px">Version</div>
+              <div id="result-version" style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--acc2);padding:8px 0">RX</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scales -->
+        <div class="scale-row">
+          <div class="scale-lbl">Ressenti général /10</div>
+          <div class="scale-btns" id="scale-rpe"></div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-lbl">RPE réel /10</div>
+          <div class="scale-btns" id="scale-rpe-real"></div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-lbl">Zone pubienne /10</div>
+          <div class="scale-btns" id="scale-zp"></div>
+        </div>
+        <div id="zp-alert" style="display:none" class="zp-alert">ZP ≥ 4 — mentionne-le avant le prochain WOD.</div>
+        <textarea class="final-textarea" id="final-note" placeholder="Sensations globales · ce qui a bien marché · à améliorer..."></textarea>
+        <button class="btn-primary" onclick="submitWod()">Terminer et générer le résumé</button>
+      </div>
+
+      <div class="card">
+        <div class="section-lbl">Export</div>
+        <pre class="export-pre" id="export-preview"></pre>
+        <button class="btn-copy" id="copy-btn">▤ Copier dans le presse-papier</button>
+      </div>
+
+      <button class="btn-hist" id="hist-toggle" onclick="toggleHist()">▼ Historique WODs (0)</button>
+      <div id="hist-list" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const HIST_KEY = "history:wods:v1";
+
+let state = {
+  warmDone: {}, coolDone: {},
+  rounds: 0, version: "rx",
+  rpe: null, rpeReal: null, zp: null,
+  finalNote: "", wodNote: "", resultRounds: "",
+  wodElapsed: 0, wodRunning: false,
+};
+
+let history = [];
+let showHist = false;
+
+// ── WOD TIMER (compte en avant) ──
+let wodInterval = null;
+
+function fmtTime(s) {
+  return String(Math.floor(s/60)).padStart(2,"0") + ":" + String(s%60).padStart(2,"0");
+}
+
+function updateWodDisplay() {
+  document.getElementById("wod-timer-display").textContent = fmtTime(state.wodElapsed);
+  document.getElementById("wod-timer-display").classList.toggle("running", state.wodRunning);
+  document.getElementById("wod-toggle").textContent = state.wodRunning ? "⏸ PAUSE" : "▶ GO";
+  document.getElementById("wod-round-display").textContent = "Round " + state.rounds;
+}
+
+document.getElementById("wod-toggle").addEventListener("click", () => {
+  state.wodRunning = !state.wodRunning;
+  if (state.wodRunning) {
+    wodInterval = setInterval(() => {
+      state.wodElapsed++;
+      if (WOD_FORMAT === "FOR_TIME" && WOD_DURATION_SEC && state.wodElapsed >= WOD_DURATION_SEC) {
+        clearInterval(wodInterval); state.wodRunning = false; playBeep();
+      }
+      updateWodDisplay();
+    }, 1000);
+  } else { clearInterval(wodInterval); }
+  updateWodDisplay();
+});
+
+document.getElementById("wod-reset").addEventListener("click", () => {
+  clearInterval(wodInterval); state.wodRunning = false; state.wodElapsed = 0; updateWodDisplay();
+});
+
+function changeRounds(delta) {
+  state.rounds = Math.max(0, state.rounds + delta);
+  updateWodDisplay();
+  updateExport();
+}
+
+// ── RÉCUP TIMER (compte à rebours) ──
+let recupSec = 90, recupPreset = 90, recupRunning = false, recupInterval = null;
+
+function updateRecupDisplay() {
+  document.getElementById("recup-timer-display").textContent = fmtTime(recupSec);
+  document.getElementById("recup-timer-display").classList.toggle("running", recupRunning);
+  document.getElementById("recup-toggle").textContent = recupRunning ? "⏸ PAUSE" : "▶ START";
+}
+
+function setRecupPreset(sec) {
+  clearInterval(recupInterval); recupRunning = false;
+  recupPreset = sec; recupSec = sec;
+  document.querySelectorAll(".preset-btn").forEach(b => b.classList.toggle("active", +b.dataset.sec === sec));
+  updateRecupDisplay();
+}
+
+document.getElementById("recup-toggle").addEventListener("click", () => {
+  recupRunning = !recupRunning;
+  if (recupRunning) {
+    recupInterval = setInterval(() => {
+      recupSec--;
+      if (recupSec <= 0) { clearInterval(recupInterval); recupRunning = false; recupSec = recupPreset; playBeep(); }
+      updateRecupDisplay();
+    }, 1000);
+  } else { clearInterval(recupInterval); }
+  updateRecupDisplay();
+});
+
+document.getElementById("recup-reset").addEventListener("click", () => {
+  clearInterval(recupInterval); recupRunning = false; recupSec = recupPreset; updateRecupDisplay();
+});
+
+document.querySelectorAll(".preset-btn").forEach(b => b.addEventListener("click", () => setRecupPreset(+b.dataset.sec)));
+
+// ── BEEP ──
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [[880,0],[1100,.45]].forEach(([f,d]) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = f;
+      g.gain.setValueAtTime(.3, ctx.currentTime+d);
+      g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime+d+.4);
+      o.start(ctx.currentTime+d); o.stop(ctx.currentTime+d+.5);
+    });
+  } catch(e) {}
+}
+
+// ── TABS ──
+function setTab(name) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.toggle("active", p.id === "tab-"+name));
+  if (name === "end") { updateExport(); buildScales(); }
+}
+document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+
+// ── VERSION RX / SCALED ──
+function setVersion(v) {
+  state.version = v;
+  document.getElementById("btn-rx").style.background = v==="rx" ? "var(--acc2)" : "var(--surf2)";
+  document.getElementById("btn-rx").style.color = v==="rx" ? "#000" : "var(--mut)";
+  document.getElementById("btn-scaled").style.background = v==="scaled" ? "var(--acc2)" : "var(--surf2)";
+  document.getElementById("btn-scaled").style.color = v==="scaled" ? "#000" : "var(--mut)";
+  document.getElementById("wod-rx-block").style.display = v==="rx" ? "block" : "none";
+  document.getElementById("wod-scaled-block").style.display = v==="scaled" ? "block" : "none";
+  document.getElementById("result-version").textContent = v.toUpperCase();
+  updateExport();
+}
+
+// ── BUILD UI ──
+function buildHeader() {
+  document.getElementById("session-label").textContent = WOD_INFO.label;
+  document.getElementById("session-title").textContent = WOD_INFO.title;
+  document.getElementById("session-badge").textContent = WOD_INFO.badge;
+  document.getElementById("session-banner").innerHTML = "<strong>Contexte :</strong> " + WOD_INFO.banner;
+  document.getElementById("wod-format-badge").textContent = WOD_FORMAT + (WOD_DURATION_SEC ? " · " + fmtTime(WOD_DURATION_SEC) : "");
+  document.getElementById("wod-duration-label").textContent = WOD_ROUNDS_TARGET ? "Objectif : " + WOD_ROUNDS_TARGET + " rounds" : (WOD_FORMAT === "AMRAP" ? "Objectif : max rounds en " + fmtTime(WOD_DURATION_SEC) : "For Time");
+  // Update wod timer display target
+  if (WOD_FORMAT === "AMRAP" && WOD_DURATION_SEC) {
+    document.getElementById("wod-timer-lbl").textContent = "WOD · " + fmtTime(WOD_DURATION_SEC);
+  }
+}
+
+function buildPrep() {
+  document.getElementById("prep-list").innerHTML = MATERIEL.map(m => `<div style="display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--bdr)"><span style="color:var(--acc2);font-size:16px">→</span><span style="font-size:13px;color:var(--txt)">${m}</span></div>`).join("");
+  document.getElementById("vigilance-content").innerHTML = VIGILANCE_HTML;
+}
+
+function buildWodList(moves, containerId) {
+  document.getElementById(containerId).innerHTML = moves.map(m => `
+    <div class="wod-line">
+      <div class="wod-reps">${m.reps}</div>
+      <div style="flex:1"><div class="wod-move">${m.move}</div><div class="wod-detail">${m.detail}</div>
+      <a href="${m.url}" target="_blank" rel="noreferrer" class="wod-video">▶ Vidéo</a></div>
+    </div>
+  `).join("");
+}
+
+function buildWarmup() {
+  document.getElementById("warmup-list").innerHTML = WARMUP.map((w,i) => `
+    <div class="check-item${state.warmDone[i]?" done":""}" onclick="toggleWarm(${i})">
+      <div class="check-circle">${state.warmDone[i]?"✓":""}</div>
+      <div class="check-text">${w}</div>
+    </div>
+  `).join("");
+}
+
+function buildCooldown() {
+  document.getElementById("cooldown-list").innerHTML = COOLDOWN.map((c,i) => `
+    <div class="check-item${state.coolDone[i]?" done":""}" onclick="toggleCool(${i})">
+      <div class="check-circle">${state.coolDone[i]?"✓":""}</div>
+      <div class="check-text">${c}</div>
+    </div>
+  `).join("");
+}
+
+function buildScales() {
+  [["scale-rpe","rpe","acc",[1,2,3,4,5,6,7,8,9,10]],
+   ["scale-rpe-real","rpeReal","ora",[1,2,3,4,5,6,7,8,9,10]],
+   ["scale-zp","zp","zp",[0,1,2,3,4,5,6,7,8,9]]].forEach(([id,key,type,vals])=>{
+    document.getElementById(id).innerHTML = vals.map(v => {
+      const sel = state[key]===v;
+      let bg="var(--surf2)",color="var(--mut)",border="1.5px solid var(--bdr)";
+      if(sel&&type==="acc"){bg="var(--acc)";color="#000";border="1.5px solid var(--acc)";}
+      if(sel&&type==="ora"){bg="var(--acc2)";color="#000";border="1.5px solid var(--acc2)";}
+      if(sel&&type==="zp"&&v<4){bg="rgba(74,222,128,0.15)";color="var(--grn)";border="1.5px solid var(--grn)";}
+      if(sel&&type==="zp"&&v>=4){bg="rgba(255,149,0,0.15)";color="var(--warn)";border="1.5px solid var(--warn)";}
+      return `<button style="flex:1;padding:9px 2px;border:${border};background:${bg};color:${color};border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:17px;cursor:pointer" onclick="setScale('${key}',${v})">${v}</button>`;
+    }).join("");
+  });
+  document.getElementById("zp-alert").style.display = (state.zp!==null&&state.zp>=4)?"block":"none";
+  // RPE prévu vs réel
+  if (state.rpeReal !== null) {
+    const diff = state.rpeReal - RPE_PREVU;
+    // on pourrait afficher un feedback ici
+  }
+}
+
+// ── INTERACTIONS ──
+function toggleWarm(i) { state.warmDone[i]=!state.warmDone[i]; buildWarmup(); }
+function toggleCool(i) { state.coolDone[i]=!state.coolDone[i]; buildCooldown(); }
+function setScale(key,val) { state[key]=val; buildScales(); updateExport(); }
+
+document.getElementById("wod-note").addEventListener("input", function() { state.wodNote=this.value; });
+document.getElementById("final-note").addEventListener("input", function() { state.finalNote=this.value; updateExport(); });
+document.getElementById("result-rounds").addEventListener("input", function() { state.resultRounds=this.value; updateExport(); });
+
+// ── STORAGE ──
+async function loadHistory() {
+  try { const h=await window.storage.get(HIST_KEY); if(h) history=JSON.parse(h.value); } catch(e) {}
+}
+async function saveHistory(snap) {
+  try {
+    let h=[]; try{const r=await window.storage.get(HIST_KEY);if(r)h=JSON.parse(r.value);}catch(e){}
+    const next=[snap,...h.filter(s=>s.id!==snap.id)];
+    await window.storage.set(HIST_KEY,JSON.stringify(next)); history=next;
+  } catch(e) {}
+}
+
+// ── EXPORT ──
+function buildExport() {
+  const L=[`═══ [WOD] ${WOD_INFO.label} — ${WOD_INFO.title} — ${WOD_INFO.dateLabel} ═══`,""];
+  L.push("Format : "+WOD_FORMAT+(WOD_DURATION_SEC?" · "+fmtTime(WOD_DURATION_SEC):""));
+  L.push("Version : "+state.version.toUpperCase());
+  L.push("Résultat : "+(state.resultRounds||"-")+" rounds/reps");
+  L.push("Temps WOD : "+fmtTime(state.wodElapsed));
+  if(state.wodNote) L.push("Note WOD : "+state.wodNote);
+  L.push("");
+  L.push("Ressenti : "+(state.rpe??"-")+"/10");
+  L.push("RPE réel : "+(state.rpeReal??"-")+"/10 (prévu : "+RPE_PREVU+")");
+  L.push("ZP : "+(state.zp??"-")+"/10");
+  if(state.finalNote) L.push("Notes : "+state.finalNote);
+  return L.join("\n");
+}
+
+function updateExport() {
+  const el=document.getElementById("export-preview"); if(el) el.textContent=buildExport();
+}
+
+document.getElementById("copy-btn").addEventListener("click",()=>{
+  navigator.clipboard.writeText(buildExport()).then(()=>{
+    document.getElementById("copy-btn").textContent="Copié ✓";
+    setTimeout(()=>document.getElementById("copy-btn").textContent="▤ Copier dans le presse-papier",2000);
+  }).catch(()=>{});
+});
+
+// ── HISTORIQUE ──
+function toggleHist() {
+  showHist=!showHist; buildHistList();
+}
+function buildHistList() {
+  document.getElementById("hist-toggle").textContent=(showHist?"▲":"▼")+" Historique WODs ("+history.length+")";
+  const list=document.getElementById("hist-list");
+  if(!showHist){list.style.display="none";return;}
+  list.style.display="block";
+  if(history.length===0){list.innerHTML=`<div style="font-size:12px;color:var(--mut);padding:12px 0;text-align:center">Aucun WOD précédent.</div>`;return;}
+  list.innerHTML=history.map(h=>`
+    <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;margin-top:8px">
+      <div class="bb" style="font-size:13px;letter-spacing:1px;color:var(--acc2);margin-bottom:6px">${h.date} — ${h.label}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--acc);margin-bottom:4px">${h.result||"-"} · ${h.version||"RX"}</div>
+      <div style="display:flex;gap:16px">
+        ${[["RPE",h.rpeReal],["Ressenti",h.rpe],["ZP",h.zp]].map(([l,v])=>`<div style="font-size:11px;color:var(--mut)"><span style="font-size:14px;font-weight:600;color:var(--txt);margin-right:2px">${v}/10</span>${l}</div>`).join("")}
+      </div>
+      ${h.notes?`<div style="font-size:10px;color:var(--mut);margin-top:6px">${h.notes}</div>`:""}
+    </div>
+  `).join("");
+}
+
+// ── SUBMIT ──
+async function submitWod() {
+  if(state.rpe===null){alert("Ressenti général /10 ?");return;}
+  if(state.rpeReal===null){alert("RPE réel /10 ?");return;}
+  if(state.zp===null){alert("ZP /10 ?");return;}
+  const snap={id:WOD_INFO.id,date:WOD_INFO.dateLabel,type:WOD_INFO.type,label:WOD_INFO.title,rpe:state.rpe,rpeReal:state.rpeReal,zp:state.zp,result:state.resultRounds,version:state.version,notes:state.finalNote};
+  await saveHistory(snap);
+  document.getElementById("app").style.display="none";
+  const fs=document.getElementById("finish-screen"); fs.classList.add("active");
+  document.getElementById("finish-title").textContent=WOD_INFO.title+" — terminé !";
+  document.getElementById("finish-sub").textContent=WOD_INFO.dateLabel+" · "+state.version.toUpperCase()+" · "+fmtTime(state.wodElapsed);
+  document.getElementById("finish-scores").innerHTML=[["Résultat",state.resultRounds||"-"],["RPE réel",state.rpeReal+"/10"],["ZP",state.zp+"/10"]].map(([l,v])=>`<div class="finish-score-box"><div class="bb" style="font-size:22px;color:var(--acc2)">${v}</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:1px">${l}</div></div>`).join("");
+  if(state.zp>=4) document.getElementById("finish-zp-alert").innerHTML=`<div class="zp-alert" style="margin-bottom:12px">ZP ≥ 4 — mentionne-le avant le prochain WOD.</div>`;
+  const txt=buildExport();
+  document.getElementById("finish-export").textContent=txt;
+  document.getElementById("finish-copy").addEventListener("click",()=>navigator.clipboard.writeText(txt).catch(()=>{}));
+}
+
+// ── WAKE LOCK ──
+let wakeLock=null;
+async function acquireWakeLock(){try{if("wakeLock"in navigator)wakeLock=await navigator.wakeLock.request("screen");}catch(e){}}
+acquireWakeLock();
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")acquireWakeLock();});
+
+// ── INIT ──
+async function init() {
+  await loadHistory();
+  buildHeader();
+  buildPrep();
+  buildWarmup();
+  buildCooldown();
+  buildWodList(WOD_RX, "wod-rx-list");
+  buildWodList(WOD_SCALED, "wod-scaled-list");
+  buildScales();
+  buildHistList();
+  updateExport();
+  updateWodDisplay();
+  updateRecupDisplay();
+}
+init();
+</script>
+</body>
+</html>
