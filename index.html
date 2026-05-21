@@ -142,65 +142,67 @@
      ═══════════════════════════════════════════════════════════ -->
 <script>
 const WOD_INFO = {
-  id:        "WOD1-2026-05-29",
-  label:     "WOD1 · 29 Mai 2026",
-  title:     "Fran revisitée",
+  id:        "WOD1-2026-05-21",
+  label:     "WOD1 · 21 Mai 2026",
+  title:     "Chipper du Retour",
   badge:     "Bloc 1 · Phase Adapt.",
-  banner:    "AMRAP 15 · RPE cible 7 · post-UBS récup active",
+  banner:    "AMRAP 12 · RPE cible 7 · Premier WOD post-UBS · Jambes chargées → volume squat limité",
   type:      "WOD-B1",
-  dateLabel: "29 mai 2026",
+  dateLabel: "21 mai 2026",
 };
 
 // FORMAT : "AMRAP", "EMOM", "FOR_TIME", "CHIPPER"
 const WOD_FORMAT = "AMRAP";
-const WOD_DURATION_SEC = 15 * 60; // durée totale en secondes
+const WOD_DURATION_SEC = 12 * 60; // durée totale en secondes
 const WOD_ROUNDS_TARGET = null;    // null si AMRAP, sinon nombre de rounds cible
 
 // MOUVEMENTS RX
 const WOD_RX = [
-  { reps:"21", move:"Thrusters KB", detail:"KB 16 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
-  { reps:"21", move:"Pull-ups",     detail:"Tractions BW", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
-  { reps:"15", move:"Thrusters KB", detail:"KB 16 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
-  { reps:"15", move:"Pull-ups",     detail:"Tractions BW", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
-  { reps:"9",  move:"Thrusters KB", detail:"KB 16 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
-  { reps:"9",  move:"Pull-ups",     detail:"Tractions BW", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
+  { reps:"10", move:"KB Swing",       detail:"KB 24 kg — hanche explosive, verrouillage haut", url:"https://www.youtube.com/watch?v=YNn7QcQSUNc" },
+  { reps:"8",  move:"Pull-ups",        detail:"Tractions BW — amplitude complète", url:"https://www.youtube.com/watch?v=eGo4IYlbE5g" },
+  { reps:"10", move:"Push-ups",        detail:"BW — poitrine au sol, gainage strict", url:"https://www.youtube.com/watch?v=IODxDxX7oi4" },
+  { reps:"10", move:"Goblet Squat KB", detail:"KB 20 kg — tempo 3s descente, jambes à surveiller", url:"https://www.youtube.com/watch?v=MeIiIdhvXT4" },
+  { reps:"10", move:"KB Swing",        detail:"KB 24 kg", url:"https://www.youtube.com/watch?v=YNn7QcQSUNc" },
 ];
 
 // MOUVEMENTS SCALED
 const WOD_SCALED = [
-  { reps:"21", move:"Thrusters KB", detail:"KB 12 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
-  { reps:"21", move:"Ring rows",    detail:"TRX incliné 45°", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
-  { reps:"15", move:"Thrusters KB", detail:"KB 12 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
-  { reps:"15", move:"Ring rows",    detail:"TRX incliné 45°", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
-  { reps:"9",  move:"Thrusters KB", detail:"KB 12 kg / bras", url:"https://www.youtube.com/watch?v=L219E_RnJ6Y" },
-  { reps:"9",  move:"Ring rows",    detail:"TRX incliné 45°", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
+  { reps:"10", move:"KB Swing",        detail:"KB 16 kg — même intention hanche", url:"https://www.youtube.com/watch?v=YNn7QcQSUNc" },
+  { reps:"8",  move:"Ring Rows TRX",   detail:"TRX incliné 45° — coudes serrés", url:"https://www.youtube.com/watch?v=bh_VwzLvHME" },
+  { reps:"10", move:"Push-ups genoux", detail:"Gainage identique, amplitude complète", url:"https://www.youtube.com/watch?v=IODxDxX7oi4" },
+  { reps:"10", move:"Goblet Squat KB", detail:"KB 12 kg — tempo 3s descente", url:"https://www.youtube.com/watch?v=MeIiIdhvXT4" },
+  { reps:"10", move:"KB Swing",        detail:"KB 16 kg", url:"https://www.youtube.com/watch?v=YNn7QcQSUNc" },
 ];
 
 const WARMUP = [
-  "Rotation hanches + épaules — 90s",
-  "Squat profond BW — 10 reps",
-  "Dead hang barre — 3 × 20s",
-  "Thruster BW — 10 reps technique",
-  "Jumping jacks — 30s",
+  "Rotation hanches en cercle — 10 reps / sens",
+  "Hip hinge BW — 10 reps, dos plat strict",
+  "Dead hang barre — 2 × 20s",
+  "Squat BW tempo lent — 8 reps (3s descente)",
+  "Bras en croix + rotations épaules — 30s",
+  "KB Swing léger (16 kg) — 10 reps d'activation",
 ];
 
 const COOLDOWN = [
-  "Étirement épaules cross-body — 30s/côté",
+  "Étirement pec contre mur — 30s/côté",
   "Fente basse hip flexor — 45s/côté",
+  "Étirement ischios debout — 30s/côté",
   "Pigeon au sol — 60s/côté",
   "Respiration 4-7-8 — 5 cycles",
 ];
 
 const MATERIEL = [
-  "KB 16 kg (RX) ou 12 kg (Scaled)",
+  "KB 24 kg (RX Swings) ou 16 kg (Scaled)",
+  "KB 20 kg (RX Goblet) ou 12 kg (Scaled)",
   "Barre de traction (ou TRX pour Scaled)",
   "Tapis",
 ];
 
 const VIGILANCE_HTML = `
-  ZP : si ≥4/10, remplacer thrusters par goblet squat KB.<br>
-  RPE cible <strong style="color:var(--acc2)">7 max</strong> — phase adaptation, pas de crame totale.<br>
-  Scaled = pas une honte, c'est la bonne décision si la forme n'est pas là.
+  <strong style="color:var(--acc2)">Jambes J7/10</strong> → Goblet squat tempo lent obligatoire, pas de charge max.<br>
+  <strong style="color:var(--acc2)">ZP 2/10</strong> → Pas de restriction, surveille quand même à chaque swing.<br>
+  <strong style="color:var(--warn)">RPE cible 7 MAX</strong> — Premier WOD du macrocycle, phase adaptation. Tu revis pas UBS aujourd'hui.<br>
+  KB Swing : l'explosivité vient de la hanche, PAS du dos. Si le dos tire, on s'arrête.
 `;
 
 const RPE_PREVU = 7;
