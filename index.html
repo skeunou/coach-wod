@@ -211,6 +211,121 @@ const RPE_PREVU = 7;
      FIN CONFIGURATION
      ═══════════════════════════════════════════════════════════ -->
 
+<!-- ═══════════════════════════════════════════════════════════
+     BANQUE D'EXERCICES — RÉFÉRENCE POUR GÉNÉRATION WOD
+     zpFlag : true = exclure si ZP ≥4
+     ═══════════════════════════════════════════════════════════ -->
+<script>
+const EXERCISE_BANK = {
+
+  // ── BARBELL ──
+  barbell: [
+    { id:"deadlift",       label:"Deadlift",               detail_rx:"Barre lourde — hanche explosive, dos plat strict",          detail_sc:"Barre légère ou KB — même intention",   url:"https://www.youtube.com/watch?v=op9kVnSso6Q", zpFlag:true  },
+    { id:"rdl_barre",      label:"Romanian Deadlift Barre", detail_rx:"Barre 50-80kg — genoux semi-fléchis, ischios en tension",   detail_sc:"Barre 30-40kg — amplitude réduite",     url:"https://www.youtube.com/watch?v=JCXUYuzwNrM", zpFlag:true  },
+    { id:"clean",          label:"Power Clean",             detail_rx:"Barre 50-70kg — réception cuisses parallèles",              detail_sc:"Barre 30-40kg ou hang clean",           url:"https://www.youtube.com/watch?v=vm4NQML1N18", zpFlag:false },
+    { id:"thruster",       label:"Thruster",                detail_rx:"Barre 40-50kg — squat + push press enchaînés",             detail_sc:"Barre 20-30kg ou haltères",             url:"https://www.youtube.com/watch?v=L219E-0F2pI", zpFlag:true  },
+    { id:"push_press",     label:"Push Press",              detail_rx:"Barre 40-60kg — impulsion jambes + lock out overhead",     detail_sc:"Barre 20-30kg ou haltères",             url:"https://www.youtube.com/watch?v=iaBVSJm78ko", zpFlag:false },
+    { id:"sohp",           label:"Shoulder to Overhead",    detail_rx:"Barre 40-60kg — strict press ou push press",               detail_sc:"Barre 20-30kg",                         url:"https://www.youtube.com/watch?v=Tl0LJqFKhiY", zpFlag:false },
+    { id:"front_squat",    label:"Front Squat",             detail_rx:"Barre 50-70kg — prise rack, coudes hauts",                 detail_sc:"Barre 30-40kg ou goblet squat KB",      url:"https://www.youtube.com/watch?v=m4ytaCJZpl0", zpFlag:true  },
+    { id:"back_squat",     label:"Back Squat",              detail_rx:"Barre 60-80kg — profondeur complète",                      detail_sc:"Barre 40-50kg ou air squat",            url:"https://www.youtube.com/watch?v=ultWZbUMPL8", zpFlag:true  },
+  ],
+
+  // ── KETTLEBELL ──
+  kettlebell: [
+    { id:"kb_swing_ru",    label:"KB Swing Russe",         detail_rx:"KB 24kg — hanche explosive, arrêt à hauteur épaules",      detail_sc:"KB 16kg — même intention hanche",       url:"https://www.youtube.com/watch?v=YNn7QcQSUNc", zpFlag:false },
+    { id:"kb_swing_am",    label:"KB Swing Américain",     detail_rx:"KB 24kg — overhead complet, bras tendus",                  detail_sc:"KB 16kg",                               url:"https://www.youtube.com/watch?v=MEu5e8-KzPU", zpFlag:false },
+    { id:"goblet_squat",   label:"Goblet Squat KB",        detail_rx:"KB 20-24kg — tempo 3s descente, poitrine haute",           detail_sc:"KB 12-16kg",                            url:"https://www.youtube.com/watch?v=MeIiIdhvXT4", zpFlag:true  },
+    { id:"kb_clean_press", label:"KB Clean & Press",       detail_rx:"KB 20kg — clean + press strict, unilatéral ou bilatéral", detail_sc:"KB 12-16kg",                            url:"https://www.youtube.com/watch?v=ORRtMKlRWGE", zpFlag:false },
+    { id:"kb_snatch",      label:"KB Snatch",              detail_rx:"KB 20-24kg — overhead en 1 mouvement, poignet stable",    detail_sc:"KB 12-16kg",                            url:"https://www.youtube.com/watch?v=vCUn5Eu4dFQ", zpFlag:false },
+    { id:"tgu",            label:"Turkish Get-Up",         detail_rx:"KB 16-20kg — mouvement complet, 5 étapes",                detail_sc:"KB 8-12kg ou sans charge",              url:"https://www.youtube.com/watch?v=0bWRPC49-KI", zpFlag:false },
+    { id:"rdl_kb",         label:"Romanian Deadlift KB",   detail_rx:"KB 2×20kg — hinge contrôlé, ischios en tension",          detail_sc:"KB 2×12-16kg",                          url:"https://www.youtube.com/watch?v=JCXUYuzwNrM", zpFlag:true  },
+    { id:"kb_farmer",      label:"Farmer Carry KB",        detail_rx:"KB 2×24kg — gainage total, pas régulier",                 detail_sc:"KB 2×16kg",                             url:"https://www.youtube.com/watch?v=rt17lmnaLSM", zpFlag:false },
+  ],
+
+  // ── HALTÈRES ──
+  halters: [
+    { id:"devil_press",    label:"Devil's Press",          detail_rx:"HL 2×15kg — burpee + snatch bilatéral overhead",          detail_sc:"HL 2×10kg",                             url:"https://www.youtube.com/watch?v=_r0SBLdFWzI", zpFlag:false },
+    { id:"db_snatch",      label:"Dumbbell Snatch",        detail_rx:"HL 15kg — overhead en 1 mouvement, unilatéral",           detail_sc:"HL 10kg",                               url:"https://www.youtube.com/watch?v=FaRy8-tmfOU", zpFlag:false },
+    { id:"db_thruster",    label:"DB Thruster",            detail_rx:"HL 2×15kg — squat + press enchaînés",                     detail_sc:"HL 2×10kg",                             url:"https://www.youtube.com/watch?v=L219E-0F2pI", zpFlag:true  },
+    { id:"db_farmer",      label:"Farmer Carry HL",        detail_rx:"HL 2×15kg — gainage total, pas régulier",                 detail_sc:"HL 2×10kg",                             url:"https://www.youtube.com/watch?v=rt17lmnaLSM", zpFlag:false },
+  ],
+
+  // ── GYMNASTICS / BARRES ──
+  gymnastics: [
+    { id:"pullups",        label:"Pull-ups",               detail_rx:"Tractions BW — amplitude complète, pronation",            detail_sc:"Élastique Medium ou TRX Row",           url:"https://www.youtube.com/watch?v=eGo4IYlbE5g", zpFlag:false },
+    { id:"pullups_sup",    label:"Pull-ups Supination",    detail_rx:"Tractions BW — prise supination, chin-up",               detail_sc:"Élastique Medium",                      url:"https://www.youtube.com/watch?v=sIvJTfGxdFo", zpFlag:false },
+    { id:"hspu",           label:"HSPU",                   detail_rx:"Handstand push-up — tête au sol, plein ROM",             detail_sc:"Pike push-up ou HSPU avec élastique",  url:"https://www.youtube.com/watch?v=XcmFiSxiS8c", zpFlag:false },
+    { id:"wall_walk",      label:"Wall Walk",              detail_rx:"BW — monter jusqu'à nez contre le mur",                  detail_sc:"Inchworm + planche",                    url:"https://www.youtube.com/watch?v=5wRwZ1vgwHI", zpFlag:false },
+    { id:"toes_to_bar",    label:"Toes to Bar",            detail_rx:"BW — pieds en contact avec la barre, hanches actives",   detail_sc:"Knees to Elbows",                       url:"https://www.youtube.com/watch?v=_03pCKOv4l4", zpFlag:false },
+    { id:"k2e",            label:"Knees to Elbows",        detail_rx:"BW — genoux touchent les coudes, gainage actif",         detail_sc:"Hanging knee raise",                    url:"https://www.youtube.com/watch?v=sZpC3nWBheo", zpFlag:false },
+    { id:"ring_row",       label:"Ring Rows / TRX Row",    detail_rx:"TRX — corps rigide, coudes serrés, 45°",                 detail_sc:"TRX incliné 60° (plus vertical = +facile)", url:"https://www.youtube.com/watch?v=bh_VwzLvHME", zpFlag:false },
+    { id:"dips",           label:"Dips",                   detail_rx:"Barre parallèle BW — ROM complet, épaules stables",      detail_sc:"Dips lestés élastique (aide)",         url:"https://www.youtube.com/watch?v=2z8JmcrW-As", zpFlag:false },
+    { id:"pushups",        label:"Push-ups",               detail_rx:"BW — poitrine au sol, gainage strict",                   detail_sc:"Push-ups genoux — amplitude identique", url:"https://www.youtube.com/watch?v=IODxDxX7oi4", zpFlag:false },
+    { id:"dead_hang",      label:"Dead Hang",              detail_rx:"BW — barre traction, 30-60s, relâcher les épaules",      detail_sc:"Durée réduite",                         url:"https://www.youtube.com/watch?v=s5sznzBkpEc", zpFlag:false },
+  ],
+
+  // ── WALL BALL ──
+  wall_ball: [
+    { id:"wall_ball",      label:"Wall Ball",              detail_rx:"9kg — squat profond, lancer à 3m+, transfert montées trail", detail_sc:"6kg",                              url:"https://www.youtube.com/watch?v=fpUD0mcFp_0", zpFlag:true  },
+  ],
+
+  // ── BOX / IMPACT ──
+  box: [
+    { id:"box_jump",       label:"Box Jump",               detail_rx:"Box 60cm — réception en squat, extension complète",       detail_sc:"Step-up si ZP — pas de saut",          url:"https://www.youtube.com/watch?v=52r_Ul5k03g", zpFlag:true  },
+    { id:"box_stepup",     label:"Box Step-Up Lesté",      detail_rx:"Box 50cm — KB 2×16kg ou barre — tempo contrôlé",         detail_sc:"BW ou KB 2×12kg",                       url:"https://www.youtube.com/watch?v=0JfHRqEfqRU", zpFlag:false },
+    { id:"burpee_box_jump",label:"Burpee Box Jump",        detail_rx:"Box 60cm — burpee + saut sur la box enchaîné",            detail_sc:"Burpee + step-up (pas de saut)",       url:"https://www.youtube.com/watch?v=l6hOBfXr1zM", zpFlag:true  },
+    { id:"burpee_over_box",label:"Burpee Over Box",        detail_rx:"Box 60cm — burpee face à la box, saut par-dessus",        detail_sc:"Burpee + contournement latéral",       url:"https://www.youtube.com/watch?v=l6hOBfXr1zM", zpFlag:true  },
+    { id:"step_lunge",     label:"Fentes Step-Up",         detail_rx:"KB 2×16kg — fente avant + step, unilatéral",             detail_sc:"BW ou KB 1×12kg",                       url:"https://www.youtube.com/watch?v=QOVaHwm-Q6U", zpFlag:false },
+  ],
+
+  // ── CARDIO / CORPS ENTIER ──
+  cardio: [
+    { id:"burpee",         label:"Burpee",                 detail_rx:"BW — poitrine au sol, saut + clap overhead, full ROM",   detail_sc:"Burpee sans saut (step back/step up)", url:"https://www.youtube.com/watch?v=dZgVxmf6jkA", zpFlag:false },
+    { id:"burpee_otb",     label:"Burpee Over the Bar",    detail_rx:"Barre au sol — burpee + saut latéral au-dessus",          detail_sc:"Burpee + enjambage latéral",           url:"https://www.youtube.com/watch?v=43DsVqZqE_c", zpFlag:true  },
+    { id:"burpee_otkb",    label:"Burpee Over the KB",     detail_rx:"KB au sol — burpee + saut latéral au-dessus",             detail_sc:"Burpee + enjambage latéral",           url:"https://www.youtube.com/watch?v=43DsVqZqE_c", zpFlag:true  },
+    { id:"mtn_climber",    label:"Mountain Climbers",      detail_rx:"BW — gainage actif, genoux vers la poitrine, cadence",   detail_sc:"Cadence réduite, planche stricte",     url:"https://www.youtube.com/watch?v=nmwgirgXLYM", zpFlag:false },
+    { id:"jump_lunge",     label:"Jumping Lunges",         detail_rx:"BW — fentes sautées, alternées, atterrissage contrôlé",  detail_sc:"EXCLURE si ZP ≥4 — fentes marchées",  url:"https://www.youtube.com/watch?v=SkAHHEf0-8M", zpFlag:true  },
+    { id:"jump_rope",      label:"Double Unders",          detail_rx:"Corde à sauter — 2 passages par saut",                   detail_sc:"×3 single unders",                     url:"https://www.youtube.com/watch?v=82egwDY6UPM", zpFlag:false },
+  ],
+
+  // ── GAINAGE / CORE ──
+  core: [
+    { id:"plank_iso",      label:"Planche Iso",            detail_rx:"BW — coudes sous épaules, gainage total, 30-60s",        detail_sc:"Durée réduite, genoux si besoin",       url:"https://www.youtube.com/watch?v=pSHjTRCQxIw", zpFlag:false },
+    { id:"plank_box",      label:"Planche Pieds Box",      detail_rx:"BW — pieds surélevés 40cm, gainage incliné",             detail_sc:"Planche sol classique",                url:"https://www.youtube.com/watch?v=pSHjTRCQxIw", zpFlag:false },
+    { id:"ab_wheel",       label:"Ab Wheel",               detail_rx:"Rollout genou → rollout debout",                         detail_sc:"Rollout genoux amplitude réduite",      url:"https://www.youtube.com/watch?v=2hsX3pHXgFw", zpFlag:false },
+    { id:"hollow_rock",    label:"Hollow Rocks",           detail_rx:"BW — position creuse maintenue, balancement",            detail_sc:"Hollow hold statique 20s",             url:"https://www.youtube.com/watch?v=GEbUJxJTJkE", zpFlag:false },
+    { id:"v_ups",          label:"V-Ups",                  detail_rx:"BW — jambes tendues + bras, toucher cheville",           detail_sc:"Tuck-ups (genoux fléchis)",            url:"https://www.youtube.com/watch?v=7UwzK3pBgUk", zpFlag:false },
+    { id:"pallof",         label:"Pallof Press",           detail_rx:"Élastique Hard — anti-rotation, bras tendus",            detail_sc:"Élastique Medium",                     url:"https://www.youtube.com/watch?v=AH_QZLm_0-s", zpFlag:false },
+    { id:"shoulder_tap",   label:"Shoulder Taps",          detail_rx:"BW — position planche, toucher épaule alternée",         detail_sc:"Gainage genoux au sol",                url:"https://www.youtube.com/watch?v=4U6dBMXJhys", zpFlag:false },
+  ],
+
+  // ── ÉLASTIQUES ──
+  bandes: [
+    { id:"band_pull_apart",label:"Band Pull-Apart",        detail_rx:"Élastique Medium — bras tendus, rétraction scapulaire",  detail_sc:"Élastique Light",                       url:"https://www.youtube.com/watch?v=QBuqoNOGNwQ", zpFlag:false },
+    { id:"band_gm",        label:"Banded Good Morning",    detail_rx:"Élastique Hard — hinge léger, ischios en tension douce", detail_sc:"Élastique Medium",                      url:"https://www.youtube.com/watch?v=4GKfgmLFBcE", zpFlag:false },
+    { id:"face_pull",      label:"Face Pull",              detail_rx:"Élastique Hard — coudes hauts, rotation externe",        detail_sc:"Élastique Medium",                      url:"https://www.youtube.com/watch?v=V8dZ3pyiCBo", zpFlag:false },
+    { id:"lat_raise_band", label:"Élévations Latérales",   detail_rx:"HL 5-10kg — arc contrôlé, pincement haut",              detail_sc:"HL 5kg ou élastique Light",             url:"https://www.youtube.com/watch?v=3VcKaXpzqRo", zpFlag:false },
+  ],
+
+};
+
+// ── FLAGS SOMMAIRE PAR CATÉGORIE ──
+// zpFlag:true = exclure si ZP ≥ 4
+// Pour générer un WOD : filtrer les exercices selon état ZP du jour
+
+function getExosByCategory(cat, excludeZP) {
+  const list = EXERCISE_BANK[cat] || [];
+  return excludeZP ? list.filter(e => !e.zpFlag) : list;
+}
+
+function getAllExos(excludeZP) {
+  return Object.values(EXERCISE_BANK).flat().filter(e => excludeZP ? !e.zpFlag : true);
+}
+</script>
+<!-- ═══════════════════════════════════════════════════════════
+     FIN BANQUE D'EXERCICES
+     ═══════════════════════════════════════════════════════════ -->
+
 <!-- FINISH SCREEN -->
 <div id="finish-screen">
   <div style="font-size:52px;margin-bottom:12px">✓</div>
